@@ -63,25 +63,23 @@ def template_match(img: np.ndarray, template, mask=None):
 
 #  特征匹配
 def feature_match(img_1: np.ndarray, img_2: np.ndarray, numbers=None):
-    # 到目前为止，我们已经导入了要使用的模块，并定义了我们的两个图像，即模板（img_1）和用于搜索模板的图像（img_2）
+    # 定义特征检测器
     # orb = cv2.ORB_create()
     sift = cv2.SIFT_create()
 
-    # 这是我们打算用于特征的检测器
     # kp_1, des_1 = orb.detectAndCompute(img_1,None)
     # kp_2, des_2 = orb.detectAndCompute(img_2,None)
     kp_1, des_1 = sift.detectAndCompute(img_1, None)
     kp_2, des_2 = sift.detectAndCompute(img_2, None)
 
-    # 在这里，我们使用orb探测器找到关键点和他们的描述符。
     # bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
     bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)  # 交叉最佳匹配
 
-    # 这就是我们的BFMatcher对象
+    # BFMatcher对象
     matches = bf.match(des_1, des_2)
     matches = sorted(matches, key=lambda x: x.distance)
 
-    # 这里我们创建描述符的匹配，然后根据它们的距离对它们排序
+    # 创建描述符的匹配, 并根据它们的距离对它们排序
     matches = matches[:numbers]
     img_3 = cv2.drawMatches(img_1, kp_1, img_2, kp_2, matches, None, flags=2)
     return matches, img_3
