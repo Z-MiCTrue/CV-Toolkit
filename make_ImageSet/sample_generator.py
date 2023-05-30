@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 import os
 
-from utils_image import enhance, general_process
+from utils_image import enhance, general_transform
 
 
 def make_file_list(folder_name: str):
@@ -91,7 +91,7 @@ def load_label(file_name_list: list, label_list: list, img_format: str, special_
             points_all = []
             for label_bbox in meta[1]:
                 points_all.append(label_bbox[1])
-            img, points_res = general_process.img_resize(img, special_size, keep_ratio=True, points=points_all)
+            img, points_res = general_transform.img_resize(img, special_size, keep_ratio=True, points=points_all)
             for i, point_res in enumerate(points_res):
                 cache_data[j][1][i][1] = point_res
             cv2.imwrite(f'./images/{img_name}', img)
@@ -159,7 +159,7 @@ def img_enhance(cache_data: list, config):
 
 def bbox_preview(img: np.ndarray, bbox_info: list):
     cv2.rectangle(img, (int(bbox_info[1][0]), int(bbox_info[1][1])),
-                       (int(bbox_info[1][2]), int(bbox_info[1][3])), (255, 0, 0), 2)
+                  (int(bbox_info[1][2]), int(bbox_info[1][3])), (255, 0, 0), 2)
     cv2.imshow('example', img)
     cv2.waitKey(50)
 
@@ -199,8 +199,9 @@ def make_cascade_classifier(cache_data: list, label_list: list):
             img_pos = img_pos[round(bbox_info[1][1]): round(bbox_info[1][3]),
                               round(bbox_info[1][0]): round(bbox_info[1][2])]
             label_id = label_list.index(bbox_info[0])
-            img_pos = general_process.img_resize(img_pos, (round(area_resize[label_id]), round(area_resize[label_id])),
-                                                 keep_ratio=True)
+            img_pos = general_transform.img_resize(img_pos,
+                                                   (round(area_resize[label_id]), round(area_resize[label_id])),
+                                                   keep_ratio=True)
             cv2.imwrite(f'./cascade_classifier_dataset/pos_{bbox_info[0]}/{i}_{meta[0]}', img_pos)
 
 
